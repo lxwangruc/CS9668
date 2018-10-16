@@ -82,33 +82,44 @@ Assignment 2 \\ % The assignment title
 
 \section*{Problem 1}
 \subsection*{Description of the algorithm}
-
+For this question, we can use a similar approach as the second  LeaderElection algorithm introduced in class. In the following description, we refer to the ID in the received message id\_m, and the ID of the current processor id\_p.
+\begin{itemize}
+	\item[1] Every processor start to send a message to it's right neighbour with its own ID and a distance d = 1.
+	\item[2] After receiving a message from its left neighbour, if id\_m is smaller than id\_p, a processor will discard the message. If id\_m is larger than id\_p, the processor will know that it is not the Leader. If the distance in the message is 1, the processor will send the message back to its left neighbour without a distance, else the processor should forward the message to its right neighbour with the distance minus 1.
+	\item[3] After receiving a message from its right neighbour, if id\_m does not equal to id\_p, then the processor should forward the message to its left neighbour, otherwise, the processor should send a message with its own ID with a distance $d = 2d$ to its right neighbour.
+	\item[4] If a processor receives a message from its left neighbour and id\_m is equal to id\_p, then the processor knows that it is the Leader. The leader should read the distance in the message(dist), and the number of the processors should be $\#p = d - dist + 1$.
+	The leader should send an "END" message with $\#p$ to its right neighbour and return $\#p$.
+	\item[5] If a processor receives an "END" message, it knows that it is not the leader and it can read $\#p$ from the message. It should forward the message to its right neighbour and return $\#p$.
+\end{itemize}
+\subsection*{Implementation}
 \subsection*{Complexity computation}
 
 \section*{Problem 2}
 \subsection*{Description of the algorithm}
-In the following description, we refer to the processor who doesn't have a left neighbor the leftmost node, the processor who doesn't have a right neighbor the rightmost node, all the processors in between the middle nodes. Also, we refer to the ID in the received message id\_m, and the ID of the current processor id\_p.
+In the following description, we refer to the processor who doesn't have a left neighbour the leftmost node, the processor who doesn't have a right neighbour the rightmost node, all the processors in between the middle nodes. Also, we refer to the ID in the received message id\_m, and the ID of the current processor id\_p.
 \begin{itemize}
 	\item[1] At the beginning of the algorithm, every processor determines whether it is the rightmost node or leftmost node or a middle node.
 
-	\item[2] Then the leftmost node sends its ID to its right neighbor.
+	\item[2] Then the leftmost node sends its ID to its right neighbour.
 
-	\item[3] For every middle node, after receiving a message from its left neighbor, the processor send the larger one between id\_m and id\_p to its right neighbor.
-	\item[4] When the rightmost node receives a message, it compares the id\_m with id\_p, if id\_m is larger, then the processor knows it is not the leader, else it is the leader. Then the processor send the larger one between id\_m and id\_p to its left neighbor, and return.
-	\item[5] For every middle node, after receiving a message from its right neighbor, the processor compare id\_m with id\_p, if id\_m is larger, then the processor knows that it is not the leader, else it is the leader. Then the processor forward the message to its left neighbor and return.
-	\item[6] When the leftmost node receives a message, it compares the id\_m with id\_p, if id\_m is larger, then the processor knows it is not the leader, else it is the leader, then return.
+	\item[3] For every middle node, after receiving a message from its left neighbour, the processor send the larger one between id\_m and id\_p to its right neighbour.
+	\item[4] When the rightmost node receives a message, it compares the id\_m with id\_p, if id\_m is larger, then the processor knows it is not the leader, else it is the leader. Then the processor send the larger one between id\_m and id\_p to its left neighbour, and return the status.
+	\item[5] For every middle node, after receiving a message from its right neighbour, the processor compare id\_m with id\_p, if id\_m is larger, then the processor knows that it is not the leader, else it is the leader. Then the processor forward the message to its left neighbour and return the status.
+	\item[6] When the leftmost node receives a message, it compares the id\_m with id\_p, if id\_m is larger, then the processor knows it is not the leader, else it is the leader, then return the status.
 \end{itemize}
+\subsection*{Implementation}
+See the A2Q2LeaderElection.java file.
 \subsection*{Prove of termination}
 \begin{itemize}
-	\item Because its a line network, so there will be a leftmost processor. Start from the leftmost processor, every processor will send a message to its right neighbor, so the right most processor will receive a message and terminate according to step 4 above. 
-	\item The rightmost processor will send a message to its left neighbor, and the message will be forwarded to all the left neighbors by all the middle processors. 
-	\item According to step 5 and 6, all the middle processors and the leftmost processor will receive a message from their right neighbors, so they all will terminate.
+	\item Because its a line network, so there will be one and only one leftmost processor. Start from the leftmost processor, every processor will send a message to its right neighbour, so the right most processor will receive a message, determine its status and terminate according to step 4 above. 
+	\item The rightmost processor will send a message to its left neighbour, and the message will be forwarded to all the left neighbours by all the middle processors. 
+	\item According to step 5 and 6, all the middle processors and the leftmost processor will receive a message from their right neighbours, so they all will terminate.
 \end{itemize}
 \subsection*{Prove of correctness}
 \begin{itemize}
 	\item Start from the leftmost processor, every processor will send a message contains the largest ID so far. So when the rightmost processor receive a message, it will contain the largest ID from all the processors except the rightmost one. 
 	\item The rightmost one can compare the largest one from all the processors from its left with its own, so it will know whether it is the leader or not. 
-	\item Then the rightmost processor will send the largest ID among all the processors to its left neighbor, and the largest ID will be forwarded to all the processors. All the other processors will compare that largest ID with their own and know whether they are the leader or not. 
+	\item Then the rightmost processor will send the largest ID among all the processors to its left neighbour, and the largest ID will be forwarded to all the processors. All the other processors will compare that largest ID with their own and know whether they are the leader or not. 
 \end{itemize}
 \subsection*{Complexity computation}
 Here we assume $n$ is the number of the processors in the network.
@@ -120,5 +131,12 @@ Then a message will be sent from the rightmost processor to the leftmost process
 Time complexity: $2(n - 1) = 2n - 1$ which is $O(n)$.
 
 Communication complexity:  $2(n - 1) = 2n - 1$ which is $O(n)$.
+
+\section*{Problem 3}
+\subsection*{Description of the algorithm}
+\subsection*{Implementation}
+\subsection*{Prove of termination}
+\subsection*{Prove of correctness}
+\subsection*{Complexity computation}
 
 \end{document}
