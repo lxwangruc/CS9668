@@ -1,0 +1,124 @@
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{graphicx,pifont,color} 
+\usepackage{amsmath}
+\usepackage[byname]{smartref}
+%\usepackage{hyperref} %comment out for hardcopy
+\usepackage{txfonts}
+\usepackage{tocloft}
+\usepackage{enumitem}
+
+\usepackage{hyperref}
+\usepackage{lhelp}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{xcolor}
+\lstset { %
+	language=C,
+	backgroundcolor=\color{black!5}, % set backgroundcolor
+	basicstyle=\footnotesize,% basic font setting
+	belowcaptionskip=1\baselineskip,
+	breaklines=true,
+	frame=L,
+	xleftmargin=\parindent,
+	showstringspaces=false,
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle=\bfseries\color{green!40!black},
+	commentstyle=\itshape\color{purple!40!black},
+	identifierstyle=\color{blue},
+	stringstyle=\color{orange},
+	numbers=left,
+	stepnumber=1,
+}
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+\textsc{Computer Science Department, UWO} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge CS9668\\
+Assignment 2 \\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{Linxiao Wang\\
+	250888611} % Your name
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+\section*{Problem 1}
+\subsection*{Description of the algorithm}
+
+\subsection*{Complexity computation}
+
+\section*{Problem 2}
+\subsection*{Description of the algorithm}
+In the following description, we refer to the processor who doesn't have a left neighbor the leftmost node, the processor who doesn't have a right neighbor the rightmost node, all the processors in between the middle nodes. Also, we refer to the ID in the received message id\_m, and the ID of the current processor id\_p.
+\begin{itemize}
+	\item[1] At the beginning of the algorithm, every processor determines whether it is the rightmost node or leftmost node or a middle node.
+
+	\item[2] Then the leftmost node sends its ID to its right neighbor.
+
+	\item[3] For every middle node, after receiving a message from its left neighbor, the processor send the larger one between id\_m and id\_p to its right neighbor.
+	\item[4] When the rightmost node receives a message, it compares the id\_m with id\_p, if id\_m is larger, then the processor knows it is not the leader, else it is the leader. Then the processor send the larger one between id\_m and id\_p to its left neighbor, and return.
+	\item[5] For every middle node, after receiving a message from its right neighbor, the processor compare id\_m with id\_p, if id\_m is larger, then the processor knows that it is not the leader, else it is the leader. Then the processor forward the message to its left neighbor and return.
+	\item[6] When the leftmost node receives a message, it compares the id\_m with id\_p, if id\_m is larger, then the processor knows it is not the leader, else it is the leader, then return.
+\end{itemize}
+\subsection*{Prove of termination}
+\begin{itemize}
+	\item Because its a line network, so there will be a leftmost processor. Start from the leftmost processor, every processor will send a message to its right neighbor, so the right most processor will receive a message and terminate according to step 4 above. 
+	\item The rightmost processor will send a message to its left neighbor, and the message will be forwarded to all the left neighbors by all the middle processors. 
+	\item According to step 5 and 6, all the middle processors and the leftmost processor will receive a message from their right neighbors, so they all will terminate.
+\end{itemize}
+\subsection*{Prove of correctness}
+\begin{itemize}
+	\item Start from the leftmost processor, every processor will send a message contains the largest ID so far. So when the rightmost processor receive a message, it will contain the largest ID from all the processors except the rightmost one. 
+	\item The rightmost one can compare the largest one from all the processors from its left with its own, so it will know whether it is the leader or not. 
+	\item Then the rightmost processor will send the largest ID among all the processors to its left neighbor, and the largest ID will be forwarded to all the processors. All the other processors will compare that largest ID with their own and know whether they are the leader or not. 
+\end{itemize}
+\subsection*{Complexity computation}
+Here we assume $n$ is the number of the processors in the network.
+
+Start from the leftmost processor, one message will be send per round, until the right most processor get an message. This will take $n - 1$ round and $n - 1$ messages are sent.
+
+Then a message will be sent from the rightmost processor to the leftmost processor, it will take $n - 1$ rounds and $n - 1$ messages are sent.
+
+Time complexity: $2(n - 1) = 2n - 1$ which is $O(n)$.
+
+Communication complexity:  $2(n - 1) = 2n - 1$ which is $O(n)$.
+
+\end{document}

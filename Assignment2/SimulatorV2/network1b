@@ -1,0 +1,9 @@
+Mode IDENT
+
+RandRing 10
+
+LoadAlgorithm LeaderElection
+
+RoundTime 500
+
+GUILayout ring

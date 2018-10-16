@@ -1,0 +1,11 @@
+Mode Identical
+
+AddNode 10: 42 7
+AddNode 7: 10 21
+AddNode 21: 7 13
+AddNode 13: 21 42 
+AddNode 42: 13 10
+
+LoadAlgorithm LeaderElection
+
+RoundTime 1000
