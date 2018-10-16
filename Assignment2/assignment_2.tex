@@ -84,14 +84,17 @@ Assignment 2 \\ % The assignment title
 \subsection*{Description of the algorithm}
 For this question, we can use a similar approach as the second  LeaderElection algorithm introduced in class. In the following description, we refer to the ID in the received message id\_m, and the ID of the current processor id\_p.
 \begin{itemize}
-	\item[1] Every processor start to send a message to it's right neighbour with its own ID and a distance d = 1.
-	\item[2] After receiving a message from its left neighbour, if id\_m is smaller than id\_p, a processor will discard the message. If id\_m is larger than id\_p, the processor will know that it is not the Leader. If the distance in the message is 1, the processor will send the message back to its left neighbour without a distance, else the processor should forward the message to its right neighbour with the distance minus 1.
+	\item[1] Every processor doesn't know whether it is the Leader of the network or not, so it starts to send a message to it's right neighbour with its own ID and a distance d = 1.
+	\item[2] After receiving a message from its left neighbour, if id\_m is smaller than id\_p, the processor will discard the message. If id\_m is larger than id\_p, the processor will know that it is not the Leader. If the distance in the message is 1, the processor will send the message back to its left neighbour without a distance, else the processor should forward the message to its right neighbour with the distance minus 1.
 	\item[3] After receiving a message from its right neighbour, if id\_m does not equal to id\_p, then the processor should forward the message to its left neighbour, otherwise, the processor should send a message with its own ID with a distance $d = 2d$ to its right neighbour.
 	\item[4] If a processor receives a message from its left neighbour and id\_m is equal to id\_p, then the processor knows that it is the Leader. The leader should read the distance in the message(dist), and the number of the processors should be $\#p = d - dist + 1$.
 	The leader should send an "END" message with $\#p$ to its right neighbour and return $\#p$.
 	\item[5] If a processor receives an "END" message, it knows that it is not the leader and it can read $\#p$ from the message. It should forward the message to its right neighbour and return $\#p$.
 \end{itemize}
 \subsection*{Implementation}
+See file A2Q1CountProcessor.java.
+
+In the end of the algorithm, every processor will return the number of the processors in the network.
 \subsection*{Complexity computation}
 
 \section*{Problem 2}
