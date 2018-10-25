@@ -6,6 +6,6 @@ AddNode 21: 7 13
 AddNode 13: 21 42 
 AddNode 42: 13 10
 
-LoadAlgorithm LeaderElection
+LoadAlgorithm A2Q1CountProcessor
 
 RoundTime 1000

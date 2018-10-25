@@ -92,10 +92,15 @@ For this question, we can use a similar approach as the second  LeaderElection a
 	\item[5] If a processor receives an "END" message, it knows that it is not the leader and it can read $\#p$ from the message. It should forward the message to its right neighbour and return $\#p$.
 \end{itemize}
 \subsection*{Implementation}
-See file A2Q1CountProcessor.java.
+See file CountProcessorsRing.java.
 
-In the end of the algorithm, every processor will return the number of the processors in the network.
+At the end of the algorithm, every processor will return the number of the processors in the network.
 \subsection*{Complexity computation}
+We can separate the whole process into phases, in each phase, a message is sent from a processor and come back to the processor from its right neighbour. So starts from phase 0, in phase $i$ , the initial distance in the message is $2^i$ which means there will be $2^{i} * 2 = 2^{i+1}$ rounds in that phase. So the total number of rounds is $\sum_{0}^{k}2^{i+1} = 2^1 + 2^2 + \cdots + 2^{k+1} = 2^{k +2} - 2 = 2^2 * 2^k -2$. When $n >= 2^k$ the program will terminate, to make it simple we assume $n = 2^k$. 
+
+Time complexity is  $2^2 * 2^k -2 + n = 4n - 2 + n = 5n - 2$ which is $O(n)$.
+
+
 
 \section*{Problem 2}
 \subsection*{Description of the algorithm}
@@ -111,7 +116,7 @@ In the following description, we refer to the processor who doesn't have a left 
 	\item[6] When the leftmost node receives a message, it compares the id\_m with id\_p, if id\_m is larger, then the processor knows it is not the leader, else it is the leader, then return the status.
 \end{itemize}
 \subsection*{Implementation}
-See the A2Q2LeaderElection.java file.
+See the LeaderElectionLine.java file.
 \subsection*{Prove of termination}
 \begin{itemize}
 	\item Because its a line network, so there will be one and only one leftmost processor. Start from the leftmost processor, every processor will send a message to its right neighbour, so the right most processor will receive a message, determine its status and terminate according to step 4 above. 
@@ -137,9 +142,55 @@ Communication complexity:  $2(n - 1) = 2n - 1$ which is $O(n)$.
 
 \section*{Problem 3}
 \subsection*{Description of the algorithm}
+ We refer to the ID in the received message id\_m, the ID of the current processor id\_p and the largest id a processor has seen so far id\_l.
+\begin{itemize}
+	\item[1] The first step of the algorithm is to find the largest id in each column. So all the processors in the left row will start to send its id to the right. After getting a message from the left, a processor will choose the larger id between id\_m and id\_p and send it to the left. 
+	\item[2] When all the processors in the right row gets the largest id from its column, the top-right processor will start to send id\_l to the bottom processor. After getting a message from the top, a processor will send the larger one between id\_m and id\_l to the bottom. 
+	\item[3] When the right-bottom processor get a message from the top, it will know the largest id in the whole grid. It can determine it's status and send the message to top and left and return. 
+	\item[4] Each processor in the right row will get the largest id and determine its status and send the id to the top and left and return,
+	\item[5] Other processors will determine their status when getting the largest id, send it to the left and return.
+	\item[6] When the processors in the left row get the largest id, they will determine their status and return.
+\end{itemize}
 \subsection*{Implementation}
+See the LeaderElectionMesh.java file.
 \subsection*{Prove of termination}
+There are 3 types of processors in this algorithm, the right 
+\begin{itemize}
+	\item[1] In the first round, the left row processors send messages to the right. In the next $W - 2$ rounds, after receiving a message from the left neighbour, the processors send messages to the right. So after $W - 1$ rounds, the right row processors will receive messages. 
+	\item[2] Then the top-right processor starts to send message to the bottom neighbour, and all the processors receiving a message from the top will send one to the bottom neighbour, so then bottom-right processor will receive a message from its top neighbour.
+	\item[3] The bottom-right processor send a message to its top neighbour and set the roundLeft to 1. All the other right row processors will receive a message from the bottom and send the message to the top neighbours and set the roundLeft to 1. 
+	\item[4] For the right row processors, after sending the message to its top, they prepare a message to sent to its left neighbour.
+	\item[5] Processors that receive messages from their right neighbour will forward the message to its left.
+	\item[5] All the processors that send a message to the left neighbour at the beginning of a round will set the roundLeft to 0. When roundLeft reaches 0, the processor will stop. Since all the processors other than the left row ones, will receive a message from ????????????????????
+\end{itemize}
 \subsection*{Prove of correctness}
+\begin{itemize}
+	\item[1] Start with the left row processors, all the processor will send the largest id so far to its right. So the right row processors will get the largest ids of their columns.
+	\item[2] Then start with the top-right processor, each right row processor will send the largest id so far to its bottom neighbour. So that the bottom-right processor will get the largest id of the grid.
+	\item[3] A message contains the largest id will be sent from the bottom-right processor to the right row processors, so all the right row processors will see the largest id, after comparing the largest is and their own ids, the right row processors will know their correct status.
+	\item[4] Then the right row processors will forward the largest to the left and the messages will be forwarded to all the processors, so all the processors will know whether or not they are the leader.
+\end{itemize}
 \subsection*{Complexity computation}
+\textbf{Time complexity: $O(W + L)$}
 
+Getting the largest id in each column will take W rounds.
+
+Then it will take L rounds for the bottom-right processor to get the largest id in the grid.
+
+It will take L rounds for all the right row processors the get the largest id.
+
+Then it will take W rounds to pass the largest id to the left row.
+
+So the total number of rounds is $2W + 2L$ which is \textbf{$O(W + L)$.}
+
+
+\textbf{Communication complexity: $O(WL)$}
+
+To get the largest id of each column, it will need $(W-1)\times L$ messages.
+
+Then it will need $L - 1$ messages to get the largest id to the bottom-right.
+
+It will follow the same path backward to send the largest id to all the processors, so there are another $(W-1)\times L + (L - 1)$ messages.
+
+So the total messages that are sent is $2((W-1)\times L + (L - 1)) = 2WL - 2$ which is in the order of \textbf{$O(WL)$.}
 \end{document}
